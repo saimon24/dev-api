@@ -38,6 +38,10 @@ export class UsersService {
       .exec();
   }
 
+  findWithPw(id: string) {
+    return this.userModel.findById(id);
+  }
+
   update(id: string, updateUserDto: UpdateUserDto) {
     return this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true });
   }

@@ -7,7 +7,6 @@ import { Todo, TodoDocument } from './schemas/todo.schema';
 
 @Injectable()
 export class TodosService {
-
   constructor(@InjectModel(Todo.name) private todoModel: Model<TodoDocument>) {}
 
   create(createTodoDto: CreateTodoDto) {
@@ -16,7 +15,7 @@ export class TodosService {
   }
 
   findAll() {
-    return this.todoModel.find();
+    return this.todoModel.find({ private: false });
   }
 
   findOne(id: string) {
@@ -25,7 +24,7 @@ export class TodosService {
 
   update(id: string, updateTodoDto) {
     return this.todoModel.findByIdAndUpdate(id, updateTodoDto, {
-      new: true
+      new: true,
     });
   }
 
