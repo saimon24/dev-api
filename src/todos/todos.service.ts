@@ -18,6 +18,10 @@ export class TodosService {
     return this.todoModel.find({ private: false });
   }
 
+  findUserTasks(id) {
+    return this.todoModel.find({ creator: id });
+  }
+
   findOne(id: string) {
     return this.todoModel.findById(id);
   }

@@ -38,6 +38,11 @@ export class TodosController {
     return this.todosService.findAll();
   }
 
+  @Get('/me')
+  findMyTasks(@Request() req) {
+    return this.todosService.findUserTasks(req.user.id);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string, @Request() req, @Res() res) {
     try {
@@ -137,16 +142,36 @@ export class TodosController {
     }),
   )
   async uploadFile(
-    @Param('id') todoId,
+    @Param('id') id,
     @UploadedFile() file,
     @Request() req,
     @Res() res,
   ) {
-    const url = req.protocol + '://' + req.get('host') + '/todos/' + file.path;
+    try {
+      const task = await this.todosService.findOne(id);
+      if (!task) {
+        return res.status(HttpStatus.NOT_FOUND).json({
+          msg: 'No task found.',
+        });
+      }
+      const creator = (task.creator as any)._id.toString();
 
-    const todo = await this.todosService.update(todoId, { img: url });
-    if (!todo) throw new NotFoundException('Todo does not exist');
-    return res.status(HttpStatus.OK).json(todo);
+      if (task.private && creator != req.user.id) {
+        return res.status(HttpStatus.UNAUTHORIZED).json({
+          msg: 'You are not allowed to update private tasks.',
+        });
+      }
+
+      const url =
+        req.protocol + '://' + req.get('host') + '/todos/' + file.path;
+
+      const todo = await this.todosService.update(id, { img: url });
+      return res.status(HttpStatus.OK).json(todo);
+    } catch (e) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        msg: 'No task found.',
+      });
+    }
   }
 
   @Get('uploads/:filename')

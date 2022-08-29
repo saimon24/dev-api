@@ -13,6 +13,9 @@ export class Todo extends Document {
   @Prop()
   desc: string;
 
+  @Prop({ default: 0 })
+  status: number;
+
   @Prop()
   img: string;
 
