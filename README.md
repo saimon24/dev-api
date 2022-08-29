@@ -13,7 +13,7 @@ Suscribe and join the live stream weekly on [Simon's YouTube channel](https://ww
 
 - NestJS
 - MongoDB
-- AWS S3
+- Future: AWS S3
 
 ## Community
 
