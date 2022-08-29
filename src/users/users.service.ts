@@ -7,20 +7,35 @@ import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
-
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
-  
+
   create(createUserDto: CreateUserDto) {
+    createUserDto.email = createUserDto.email.toLowerCase();
     const newUser = new this.userModel(createUserDto);
     return newUser.save();
   }
 
   findAll() {
-    return this.userModel.find();
+    return this.userModel.find(
+      {},
+      {
+        email: 1,
+        username: 1,
+        createdAt: 1,
+        _id: 1,
+      },
+    );
   }
 
   findOne(id: string) {
-    return this.userModel.findById(id);
+    return this.userModel
+      .findById(id, {
+        email: 1,
+        username: 1,
+        createdAt: 1,
+        _id: 1,
+      })
+      .exec();
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
@@ -32,6 +47,6 @@ export class UsersService {
   }
 
   findByEmail(email) {
-    return this.userModel.findOne({ email }, 'password')
+    return this.userModel.findOne({ email }, 'password');
   }
 }

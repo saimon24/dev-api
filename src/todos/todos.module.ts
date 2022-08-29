@@ -14,12 +14,12 @@ import { PassportModule } from '@nestjs/passport';
           const schema = TodoSchema;
           schema.plugin(require('mongoose-autopopulate'));
           return schema;
-        }
-      }
+        },
+      },
     ]),
     PassportModule.register({ defaultStrategy: 'jwt', session: false }),
   ],
   controllers: [TodosController],
-  providers: [TodosService]
+  providers: [TodosService],
 })
-export class TodosModule { }
+export class TodosModule {}
