@@ -7,7 +7,7 @@ This is an example API for courses and tutorials.
 ## Overall description
 
 I'm builidng an all purpose dummy API to make testing stuff easier.
-Suscribe and join the live stream weekly on [Simon's YouTube channel](https://www.youtube.com/c/SimonGrimmDev)
+Subscribe and join the live stream weekly on [Simon's YouTube channel](https://www.youtube.com/c/SimonGrimmDev)
 
 ## Technologies
 
