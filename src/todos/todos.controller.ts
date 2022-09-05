@@ -162,8 +162,7 @@ export class TodosController {
         });
       }
 
-      const url =
-        req.protocol + '://' + req.get('host') + '/todos/' + file.path;
+      const url = 'https://' + req.get('host') + '/todos/' + file.path;
 
       const todo = await this.todosService.update(id, { img: url });
       return res.status(HttpStatus.OK).json(todo);
