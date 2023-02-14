@@ -33,6 +33,6 @@ export class TodosService {
   }
 
   remove(id: string) {
-    return this.todoModel.deleteOne({ id }).exec();
+    return this.todoModel.deleteOne({ _id: id }).exec();
   }
 }
