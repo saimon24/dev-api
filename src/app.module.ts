@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { TodosModule } from './todos/todos.module';
 import { HealthController } from './health/health.controller';
 import { AppController } from './app.controller';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AppController } from './app.controller';
     }),
     AuthModule,
     TodosModule,
+    MessagesModule,
   ],
   controllers: [HealthController, AppController],
   providers: [],
