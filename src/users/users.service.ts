@@ -15,16 +15,24 @@ export class UsersService {
     return newUser.save();
   }
 
-  findAll() {
-    return this.userModel.find(
-      {},
-      {
-        email: 1,
-        username: 1,
-        createdAt: 1,
-        _id: 1,
-      },
-    );
+  findAll(documentsToSkip = 0, limitOfDocuments?: number) {
+    const query = this.userModel
+      .find(
+        {},
+        {
+          email: 1,
+          username: 1,
+          createdAt: 1,
+          _id: 1,
+        },
+      )
+      .sort({ _id: 1 })
+      .skip(documentsToSkip);
+
+    if (limitOfDocuments) {
+      query.limit(limitOfDocuments);
+    }
+    return query;
   }
 
   findOne(id: string) {

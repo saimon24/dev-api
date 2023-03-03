@@ -11,11 +11,20 @@ import {
   Res,
   HttpStatus,
   NotAcceptableException,
+  Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { PaginationParams } from '../utils/paginationParams';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname, join } from 'path';
+import * as fs from 'fs';
+import { createReadStream } from 'fs';
 
 @Controller('users')
 export class UsersController {
@@ -39,8 +48,8 @@ export class UsersController {
 
   @UseGuards(AuthGuard())
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query() { skip, limit }: PaginationParams) {
+    return this.usersService.findAll(skip, limit);
   }
 
   @UseGuards(AuthGuard())
@@ -83,5 +92,60 @@ export class UsersController {
     return res.status(HttpStatus.OK).json({
       msg: 'User deleted.',
     });
+  }
+
+  @UseGuards(AuthGuard())
+  @Put(':id/avatar')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/avatars',
+        filename: (req, file, cb) => {
+          const randomName = req.params.id;
+          cb(null, `${randomName}.png`);
+        },
+      }),
+      fileFilter(req, file, cb) {
+        if (req.user.id != req.params.id) {
+          return cb(null, false);
+        }
+        return cb(null, true);
+      },
+    }),
+  )
+  async uploadFile(
+    @Param('id') id,
+    @UploadedFile() file,
+    @Request() req,
+    @Res() res,
+  ) {
+    try {
+      if (id != req.user.id) {
+        return res.status(HttpStatus.UNAUTHORIZED).json({
+          msg: 'You are not allowed to update other avatars.',
+        });
+      }
+
+      return res.status(HttpStatus.OK).json({
+        msg: 'Avatar updated.',
+      });
+    } catch (e) {
+      console.log('error: ', e);
+
+      return res.status(HttpStatus.NOT_FOUND).json({
+        msg: 'Encountered error: ' + e,
+      });
+    }
+  }
+
+  @Get(':id/avatar')
+  async getImage(@Param('id') id, @Res() res) {
+    if (!fs.existsSync(`uploads/avatars/${id}.png`)) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        msg: 'User has no avatar',
+      });
+    } else {
+      res.sendFile(`${id}.png`, { root: 'uploads/avatars' });
+    }
   }
 }
