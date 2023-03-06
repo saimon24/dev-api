@@ -161,8 +161,10 @@ export class TodosController {
           msg: 'You are not allowed to update private tasks.',
         });
       }
+      const ssl =
+        req.get('host').indexOf('localhost') >= 0 ? 'http://' : 'https://';
 
-      const url = 'https://' + req.get('host') + '/todos/' + file.path;
+      const url = ssl + req.get('host') + '/todos/' + file.path;
 
       const todo = await this.todosService.update(id, { img: url });
       return res.status(HttpStatus.OK).json(todo);
